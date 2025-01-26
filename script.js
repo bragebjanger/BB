@@ -3,7 +3,7 @@ import HTTP_CODES from './utils/httpCodes.mjs';
 import { v4 as uuidv4 } from 'uuid';
 
 const server = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5500;
 const { v4: uuidv4 } = require('uuid');
 
 server.set('port', port);

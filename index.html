@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Testing</title>
+</head>
+
+<body>
+    <h2>Response:</h2>
+    <pre id="response"></pre>
+</body>
+
+<script>
+    window.addEventListener('load', async () => {
+
+
+      const responseContainer = document.getElementById('response');
+
+      try {
+        const response = await fetch(`/tmp/deck`, {
+          method: 'POST',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          responseContainer.textContent = JSON.stringify(data, null, 2);
+        } else {
+          responseContainer.textContent = `Error: ${response.status} - ${response.statusText}`;
+        }
+      } catch (error) {
+        responseContainer.textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
