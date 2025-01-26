@@ -7,6 +7,22 @@ const port = process.env.PORT || 8000;
 server.set('port', port);
 server.use(express.static('public'));
 
+const decks = {};
+
+function createDeck(){
+    const suits = ["hjerter", "ruter", "spar", "kløver"]
+    const values = ["1","2","3","4","5","6","7","8","9","10","J","Q","K","A"]
+
+    const deck =[];
+    for(const suit of suits){
+        for(const value of values){
+            deck.push({suit, value})
+        }
+    }
+
+    return deck;
+}
+
 
 function getRoot(req, res, next) {
     res.status(HTTP_CODES.SUCCESS.OK).send('Hello World').end();
