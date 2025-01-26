@@ -23,7 +23,7 @@
 <body>
   <h1>Card Deck</h1>
   
-  <!-- Buttons for each action -->
+
   <div>
     <button id="createDeckBtn">Create Deck</button>
     <button id="getDeckBtn">Get Deck</button>
@@ -31,18 +31,17 @@
     <button id="getCardBtn">Get Card</button>
   </div>
   
-  <!-- Display card information -->
+
   <div id="card-container">
     <div id="card" class="card">No card yet</div>
   </div>
 
   <script>
-    let deckId = null;  // Variable to store the current deck ID
+    let deckId = null;
 
-    // Function to create a new deck
     async function createDeck() {
       try {
-        const response = await fetch('/temp/deck', { method: 'POST' });
+        const response = await fetch('http://localhost:8000/temp/deck', { method: 'POST' });
 
         if (response.ok) {
           const data = await response.json();
@@ -56,7 +55,6 @@
       }
     }
 
-    // Function to get the entire deck
     async function getDeck() {
       if (!deckId) {
         alert("No deck available! Create a deck first.");
@@ -68,7 +66,7 @@
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data.deck);  // Optionally log the deck to console
+          console.log(data.deck);
           alert(`Deck fetched! It contains ${data.deck.length} cards.`);
         } else {
           alert("Failed to get deck: " + response.statusText);
@@ -78,7 +76,6 @@
       }
     }
 
-    // Function to shuffle the deck
     async function shuffleDeck() {
       if (!deckId) {
         alert("No deck available! Create a deck first.");
@@ -99,7 +96,7 @@
       }
     }
 
-    // Function to get a card from the deck
+
     async function getCard() {
       if (!deckId) {
         alert("No deck available! Create a deck first.");
@@ -112,7 +109,7 @@
         if (response.ok) {
           const data = await response.json();
           const drawnCard = data.drawn_card;
-          displayCard(drawnCard);  // Display the drawn card on the page
+          displayCard(drawnCard);
         } else {
           alert("Failed to get card: " + response.statusText);
         }
@@ -121,16 +118,14 @@
       }
     }
 
-    // Function to display the drawn card
+
     function displayCard(card) {
       const cardContainer = document.getElementById('card');
       cardContainer.innerHTML = `${card.value} of ${card.suit}`;
       
-      // Optionally, you can add images of cards if you have them.
-      // cardContainer.innerHTML = `<img src="images/${card.value}_${card.suit}.png" alt="${card.value} of ${card.suit}" />`;
+
     }
 
-    // Event listeners for buttons
     document.getElementById("createDeckBtn").addEventListener("click", createDeck);
     document.getElementById("getDeckBtn").addEventListener("click", getDeck);
     document.getElementById("shuffleDeckBtn").addEventListener("click", shuffleDeck);
