@@ -23,6 +23,17 @@ function createDeck(){
     return deck;
 }
 
+function postCreateDeck(req, res, next) {
+    const deckId = uuidv4();
+    const deck = createDeck();
+
+    decks[deckId] = deck;
+
+    res.status(HTTP_CODES.SUCCESS.CREATED)
+        .json({ deck_id: deckId })
+        .end();
+}
+
 
 function getRoot(req, res, next) {
     res.status(HTTP_CODES.SUCCESS.OK).send('Hello World').end();
@@ -65,6 +76,7 @@ server.get("/", getRoot);
 server.get("/tmp/poem", getPoem);
 server.get("/tmp/quote", getQuote);
 server.post("/tmp/sum/:a/:b", postSum);
+server.post("/temp/deck", postCreateDeck);
 
 server.listen(server.get('port'), function () {
     console.log('Server running on port', server.get('port'));
