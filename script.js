@@ -25,6 +25,31 @@ function createDeck(){
     return deck;
 }
 
+function shuffleDeck(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+}
+
+
+function patchShuffleDeck(req, res, next) {
+    const { deck_id } = req.params;
+
+    if (!decks[deck_id]) {
+        return res.status(404)
+            .json({ error: "Deck not found" })
+            .end();
+    }
+
+    const deck = decks[deck_id];
+    shuffleDeck(deck);
+
+    res.status(200)
+        .json({ deck_id: deck_id, shuffled_deck: deck })
+        .end();
+}
+
 function postCreateDeck(req, res, next) {
     const deckId = uuidv4();
     const deck = createDeck();
@@ -79,6 +104,7 @@ server.get("/tmp/poem", getPoem);
 server.get("/tmp/quote", getQuote);
 server.post("/tmp/sum/:a/:b", postSum);
 server.post("/temp/deck", postCreateDeck);
+server.patch("/temp/deck/shuffle/:deck_id", patchShuffleDeck);
 
 server.listen(server.get('port'), function () {
     console.log('Server running on port', server.get('port'));
