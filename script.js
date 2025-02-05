@@ -13,6 +13,20 @@ server.use(cors());
 
 const decks = {};
 
+// API Validering til Top Secret deler av serveren
+
+function apiAuth(req, res, next) {
+    const apiKey = req.headers['x-api-key'];
+    const validKey = "58008";
+    if (!apiKey || apiKey !== validKey) {
+        return res.status(403).json({ error: "Ugyldig API-nøkkel" });
+    }
+
+    next();
+}
+
+server.use("/top-secret", apiAuth);
+
 function createDeck(){
     const suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
     const values = ["1","2","3","4","5","6","7","8","9","10","Jack","Queen","King","Ace"]
