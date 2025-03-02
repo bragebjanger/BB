@@ -35,8 +35,7 @@
     async function fetchQuizData() {
     const response = await fetch("http://localhost:3000/quiz");
     const data = await response.json();
-
-    console.log(data.data); 
+    return data.data;
 }
 
 let quizData = [];
@@ -57,10 +56,10 @@ function showQuestion() {
     }
 
     const question = quizData[currentQuestionIndex];
-    document.getElementById("question").innerText = `Hva er hovedstaden i ${question.country}?`;
+    document.getElementById("question").innerText = `What is the capital of ${question.country}?`;
 
     const optionsContainer = document.getElementById("options");
-    optionsContainer.innerHTML = ""; // Tøm forrige alternativer
+    optionsContainer.innerHTML = "";
 
     question.options.forEach(option => {
         const button = document.createElement("button");
@@ -70,5 +69,5 @@ function showQuestion() {
     });
 }
 
-fetchQuizData();
+startQuiz();
 </script>

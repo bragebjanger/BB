@@ -68,7 +68,7 @@ const quizQuestions = [
 ];
 
 app.get("/quiz", (req, res) => {
-    res.json({ status: "success", data: capitals });
+    res.json({ status: "success", data: quizQuestions });
 });
 
 const PORT = 3000;
