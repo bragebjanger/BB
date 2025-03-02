@@ -11,3 +11,10 @@ const capitals = [
     { country: "Japan", capital: "Tokyo" },
     { country: "Brazil", capital: "Brasilia" }
 ];
+
+app.get("/quiz", (req, res) => {
+    res.json({ status: "success", data: capitals });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`API kjører på http://localhost:${PORT}`));
