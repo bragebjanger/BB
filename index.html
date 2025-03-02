@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Deck</title>
+  <title>Capital Quiz</title>
   <style>
     .card {
       width: 100px;
@@ -26,5 +26,12 @@
 </body>
 
 <script>
-    
+    async function fetchQuizData() {
+    const response = await fetch("http://localhost:3000/quiz");
+    const data = await response.json();
+
+    console.log(data.data); 
+}
+
+fetchQuizData();
 </script>
