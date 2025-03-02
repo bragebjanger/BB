@@ -69,5 +69,17 @@ function showQuestion() {
     });
 }
 
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        score++;
+    }
+    currentQuestionIndex++;
+    showQuestion();
+}
+
+function showResult() {
+    document.getElementById("quiz-container").innerHTML = `<h2>You got ${score} out of ${quizData.length} correct!</h2>`;
+}
+
 startQuiz();
 </script>

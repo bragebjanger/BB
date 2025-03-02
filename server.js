@@ -71,5 +71,49 @@ app.get("/quiz", (req, res) => {
     res.json({ status: "success", data: quizQuestions });
 });
 
+app.get("/quiz/:id", (req, res) => {
+    const { id } = req.params;
+    const question = findQuestionById(quizQuestions, id);
+    res.json({ status: "success", data: question });
+  });
+
+app.post("/quiz", (req, res) => {
+  const { question, correctAnswer, options } = req.body;
+  const newQuestion = {
+    id: quizQuestions.length + 1,
+    question,
+    correctAnswer,
+    options
+  };
+  quizQuestions.push(newQuestion);
+  res.json({ status: "success", data: newQuestion });
+});
+
+app.put("/quiz/:id", (req, res) => {
+    const { id } = req.params;
+    const { question, correctAnswer, options } = req.body;
+    const questionToUpdate = findQuestionById(quizQuestions, id);
+    if (questionToUpdate) {
+      questionToUpdate.question = question || questionToUpdate.question;
+      questionToUpdate.correctAnswer = correctAnswer || questionToUpdate.correctAnswer;
+      questionToUpdate.options = options || questionToUpdate.options;
+      res.json({ status: "success", data: questionToUpdate });
+    } else {
+      res.status(404).json({ status: "error", message: "Question not found" });
+    }
+  });
+
+app.delete("/quiz/:id", (req, res) => {
+    const { id } = req.params;
+    const questionIndex = quizQuestions.findIndex(q => q.id == id);
+    
+    if (questionIndex !== -1) {
+      quizQuestions.splice(questionIndex, 1);
+      res.json({ status: "success", message: "Question deleted" });
+    } else {
+      res.status(404).json({ status: "error", message: "Question not found" });
+    }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`API kjører på http://localhost:${PORT}`));
