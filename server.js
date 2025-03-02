@@ -115,5 +115,10 @@ app.delete("/quiz/:id", (req, res) => {
     }
 });
 
+function findQuestionById(node, id) {
+    if (!node) return null;
+    if (node.id == id) return node;
+  }
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`API kjører på http://localhost:${PORT}`));
