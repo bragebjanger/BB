@@ -2,18 +2,6 @@
     "short_name": "Capital Quiz",
     "name": "Capital Quiz PWA",
     "description": "A quiz app to test your knowledge of world capitals.",
-    "icons": [
-      {
-        "src": "icons/icon-192x192.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "icons/icon-512x512.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
     "start_url": "/",
     "background_color": "#ffffff",
     "display": "standalone",
