@@ -1,12 +1,12 @@
-import express from 'express'
-import cors from "cors";
-import dotenv from "dotenv";
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
-import path from 'path';
+const path = require("path");
 app.use(express.static(path.join(__dirname, 'public')));
 
 const quizQuestions = [
