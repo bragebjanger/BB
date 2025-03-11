@@ -6,7 +6,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-const path = require("path");
+import path from 'path';
 app.use(express.static(path.join(__dirname, 'public')));
 
 const quizQuestions = [
