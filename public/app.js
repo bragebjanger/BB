@@ -39,7 +39,7 @@ function showQuestion() {
   question.options.forEach(option => {
     const button = document.createElement("button");
     button.innerText = option;
-    button.onclick = () => checkAnswer(option, question.correctAnswer);
+    button.onclick = () => checkAnswer(option, question.correctanswer);
     optionsContainer.appendChild(button);
   });
 
