@@ -47,6 +47,8 @@ function showQuestion() {
 }
 
 function checkAnswer(selected, correct) {
+  console.log("Selected:", selected);
+  console.log("Correct:", correct);
   if (selected === correct) {
     score++;
   }
