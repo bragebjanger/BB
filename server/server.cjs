@@ -20,7 +20,9 @@ console.log("PORT:", process.env.PORT || 3000);
 
 app.get("/", (req, res) => {
   console.log("GET / - Mottatt forespørsel til rot-URL-en");
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  const indexPath = path.join(__dirname, '../public/index.html');
+  console.log("Serving index.html from:", indexPath);
+  res.sendFile(indexPath);
 });
 
 app.get("/quiz", async (req, res) => {
