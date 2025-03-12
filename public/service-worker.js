@@ -1,4 +1,4 @@
-const CACHE_NAME = 'capital-quiz-v2';
+const CACHE_NAME = 'capital-quiz-v3'; // Updated cache name to force refresh
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -18,19 +18,25 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method === 'GET') {
+  const requestUrl = new URL(event.request.url);
+
+  if (event.request.method === 'GET' && ASSETS_TO_CACHE.includes(requestUrl.pathname)) {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then((cache) => cache.put(event.request, responseToCache));
+      caches.match(event.request)
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
           }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request);
+
+          return fetch(event.request)
+            .then((response) => {
+              if (response && response.status === 200) {
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME)
+                  .then((cache) => cache.put(event.request, responseToCache));
+              }
+              return response;
+            });
         })
     );
   } else {
