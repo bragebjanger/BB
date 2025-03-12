@@ -20,7 +20,7 @@ console.log("PORT:", process.env.PORT || 3000);
 
 app.get("/", (req, res) => {
   console.log("GET / - Mottatt forespørsel til rot-URL-en");
-  res.send("Velkommen til Capital Quiz API-et!");
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.get("/quiz", async (req, res) => {
