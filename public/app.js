@@ -5,7 +5,6 @@ let score = 0;
 async function fetchQuizData() {
   const response = await fetch("/quiz");
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
@@ -23,7 +22,7 @@ function showQuestion() {
   }
 
   const question = quizData[currentQuestionIndex];
-  document.getElementById("question").innerText = `What is the capital of ${question.country}?`;
+  document.getElementById("question").innerText = `What is the capital of ${quizData[0].country}?`;
 
   const optionsContainer = document.getElementById("options");
   optionsContainer.innerHTML = "";
