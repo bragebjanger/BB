@@ -3,9 +3,17 @@ let currentQuestionIndex = 0;
 let score = 0;
 
 async function fetchQuizData() {
-  const response = await fetch("/quiz");
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch("/quiz");
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error fetching quiz data:', error);
+    return [];
+  }
 }
 
 async function startQuiz() {
@@ -22,7 +30,7 @@ function showQuestion() {
   }
 
   const question = quizData[currentQuestionIndex];
-  document.getElementById("question").innerText = `What is the capital of ${quizData[0].country}?`;
+  document.getElementById("question").innerText = `What is the capital of ${question.country}?`;
 
   const optionsContainer = document.getElementById("options");
   optionsContainer.innerHTML = "";

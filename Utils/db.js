@@ -6,12 +6,9 @@ console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Test databasekoblingen
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('Feil ved tilkobling til databasen:', err);
