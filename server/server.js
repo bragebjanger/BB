@@ -1,8 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const pool = require('../Utils/db.cjs');
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import path from "path";
+import pool from "../Utils/db.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 app.use(cors());
