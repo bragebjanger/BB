@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const pool = require('./db.cjs');
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
 app.use(cors());
