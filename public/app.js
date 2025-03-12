@@ -5,6 +5,7 @@ let score = 0;
 async function fetchQuizData() {
   const response = await fetch("/quiz");
   const data = await response.json();
+  console.log(data);
   return data;
 }
 
