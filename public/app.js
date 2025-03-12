@@ -21,6 +21,7 @@ async function fetchQuizData() {
 function startQuiz() {
   document.getElementById("start-button").style.display = "none";
   document.getElementById("quiz-container").style.display = "block";
+  document.getElementById("manage-questions").style.display = "none"; // Hide question management section
   currentQuestionIndex = 0;
   score = 0;
   showQuestion();
@@ -144,15 +145,19 @@ async function handleAddQuestion(event) {
   event.preventDefault();
   const country = document.getElementById("country").value;
   const capital = document.getElementById("capital").value;
-  const options = [capital, "Option 2", "Option 3"]; // Add more options as needed
+  const option1 = document.getElementById("option1").value;
+  const option2 = document.getElementById("option2").value;
+  const option3 = document.getElementById("option3").value;
 
-  if (country && capital) {
+  const options = [capital, option1, option2, option3]; // Include user-provided options
+
+  if (country && capital && option1 && option2 && option3) {
     await addQuestion(country, capital, options);
     quizData = await fetchQuizData(); // Refresh the quiz data
     renderQuestionList(); // Update the question list
     document.getElementById("add-question-form").reset(); // Clear the form
   } else {
-    alert("Please fill in both country and capital.");
+    alert("Please fill in all fields.");
   }
 }
 
@@ -161,6 +166,16 @@ async function handleDeleteQuestion(id) {
   await deleteQuestion(id);
   quizData = await fetchQuizData(); // Refresh the quiz data
   renderQuestionList(); // Update the question list
+}
+
+// Toggle the visibility of the question management section
+function toggleManageQuestions() {
+  const manageQuestionsSection = document.getElementById("manage-questions");
+  if (manageQuestionsSection.style.display === "none") {
+    manageQuestionsSection.style.display = "block";
+  } else {
+    manageQuestionsSection.style.display = "none";
+  }
 }
 
 // Initialize the app
@@ -179,6 +194,8 @@ document.getElementById("start-button").addEventListener("click", async () => {
 });
 
 document.getElementById("add-question-form").addEventListener("submit", handleAddQuestion);
+
+document.getElementById("manage-questions-button").addEventListener("click", toggleManageQuestions);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

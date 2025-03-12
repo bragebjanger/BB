@@ -9,6 +9,8 @@
 </head>
 <body>
   <button id="start-button">Start Quiz</button>
+  <button id="manage-questions-button">Manage Questions</button>
+
   <div id="quiz-container" style="display: none;">
     <h1>Capital Quiz</h1>
     <p id="question"></p>
@@ -16,12 +18,15 @@
     <button id="next-button" style="display: none;">Next Question</button>
   </div>
 
-  <!-- Add new question form -->
-  <div id="manage-questions">
+  <!-- Question management section -->
+  <div id="manage-questions" style="display: none;">
     <h2>Manage Questions</h2>
     <form id="add-question-form">
       <input type="text" id="country" placeholder="Country" required>
       <input type="text" id="capital" placeholder="Capital" required>
+      <input type="text" id="option1" placeholder="Option 1" required>
+      <input type="text" id="option2" placeholder="Option 2" required>
+      <input type="text" id="option3" placeholder="Option 3" required>
       <button type="submit">Add Question</button>
     </form>
 
