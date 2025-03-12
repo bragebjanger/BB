@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const pool = require('../db.cjs');
+const pool = require('../Utils/db.cjs');
 require("dotenv").config();
 
 const app = express();
@@ -107,6 +107,8 @@ app.delete("/quiz/:id", async (req, res) => {
     res.status(500).json({ status: "error", message: "Server error" });
   }
 });
+
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
