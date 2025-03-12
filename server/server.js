@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -20,36 +19,45 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-console.log("Starter serveren...");
-
-console.log("Miljøvariabler:");
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
-console.log("PORT:", process.env.PORT || 3000);
-
-app.get("/", (req, res) => {
-  console.log("GET / - Mottatt forespørsel til rot-URL-en");
-  const indexPath = path.join(__dirname, '../public/index.html');
-  console.log("Serving index.html from:", indexPath);
-  res.sendFile(indexPath);
-});
-
+// Endpoint to fetch quiz questions
 app.get("/quiz", async (req, res) => {
-  console.log("GET /quiz - Mottatt forespørsel om alle quiz-spørsmål");
   try {
     const allQuestions = await pool.query("SELECT * FROM quiz_questions");
-    console.log("Spørring vellykket. Antall spørsmål:", allQuestions.rows.length);
     res.json({ status: "success", data: allQuestions.rows });
   } catch (err) {
-    console.error("Feil under henting av quiz-spørsmål:", err.message);
+    console.error("Error fetching quiz questions:", err.message);
     res.status(500).json({ status: "error", message: "Server error" });
   }
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+// Endpoint to add a new question
+app.post("/quiz/add", async (req, res) => {
+  const { country, correctanswer, options } = req.body;
+  try {
+    const newQuestion = await pool.query(
+      "INSERT INTO quiz_questions (country, correctanswer, options) VALUES ($1, $2, $3) RETURNING *",
+      [country, correctanswer, options]
+    );
+    res.json({ status: "success", data: newQuestion.rows[0] });
+  } catch (err) {
+    console.error("Error adding question:", err.message);
+    res.status(500).json({ status: "error", message: "Server error" });
+  }
+});
+
+// Endpoint to delete a question
+app.delete("/quiz/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query("DELETE FROM quiz_questions WHERE id = $1", [id]);
+    res.json({ status: "success", message: "Question deleted" });
+  } catch (err) {
+    console.error("Error deleting question:", err.message);
+    res.status(500).json({ status: "error", message: "Server error" });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`API kjører på http://localhost:${PORT}`);
+  console.log(`API running on http://localhost:${PORT}`);
 });

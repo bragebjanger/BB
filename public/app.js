@@ -2,6 +2,7 @@ let quizData = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
+// Fetch quiz data from the server
 async function fetchQuizData() {
   try {
     const response = await fetch("/quiz");
@@ -16,6 +17,7 @@ async function fetchQuizData() {
   }
 }
 
+// Start the quiz
 function startQuiz() {
   document.getElementById("start-button").style.display = "none";
   document.getElementById("quiz-container").style.display = "block";
@@ -24,6 +26,7 @@ function startQuiz() {
   showQuestion();
 }
 
+// Display the current question
 function showQuestion() {
   if (currentQuestionIndex >= quizData.length) {
     showResult();
@@ -39,13 +42,14 @@ function showQuestion() {
   question.options.forEach(option => {
     const button = document.createElement("button");
     button.innerText = option;
-    button.onclick = () => checkAnswer(option, question.correctanswer);
+    button.onclick = () => checkAnswer(option, question.correctanswer); // Use correctanswer (all lowercase)
     optionsContainer.appendChild(button);
   });
 
   document.getElementById("next-button").style.display = "none";
 }
 
+// Check the user's answer
 function checkAnswer(selected, correct) {
   console.log("Selected:", selected);
   console.log("Correct:", correct);
@@ -60,6 +64,7 @@ function checkAnswer(selected, correct) {
   }
 }
 
+// Show the quiz result
 function showResult() {
   document.getElementById("quiz-container").innerHTML = `
     <h2>Quiz Result</h2>
@@ -69,6 +74,7 @@ function showResult() {
   document.getElementById("reset-button").addEventListener("click", resetQuiz);
 }
 
+// Reset the quiz
 function resetQuiz() {
   document.getElementById("start-button").style.display = "block";
   document.getElementById("quiz-container").style.display = "none";
@@ -81,10 +87,89 @@ function resetQuiz() {
   startQuiz();
 }
 
+// Add a new question to the database
+async function addQuestion(country, capital, options) {
+  try {
+    const response = await fetch("/quiz/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ country, correctanswer: capital, options }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to add question');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding question:', error);
+  }
+}
+
+// Delete a question from the database
+async function deleteQuestion(id) {
+  try {
+    const response = await fetch(`/quiz/delete/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete question');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error deleting question:', error);
+  }
+}
+
+// Render the list of current questions
+async function renderQuestionList() {
+  const questionList = document.getElementById("question-list");
+  questionList.innerHTML = "";
+
+  quizData.forEach((question, index) => {
+    const questionItem = document.createElement("div");
+    questionItem.className = "question-item";
+    questionItem.innerHTML = `
+      <p>${index + 1}. ${question.country} - ${question.correctanswer}</p>
+      <button onclick="handleDeleteQuestion('${question.id}')">Delete</button>
+    `;
+    questionList.appendChild(questionItem);
+  });
+}
+
+// Handle form submission for adding a new question
+async function handleAddQuestion(event) {
+  event.preventDefault();
+  const country = document.getElementById("country").value;
+  const capital = document.getElementById("capital").value;
+  const options = [capital, "Option 2", "Option 3"]; // Add more options as needed
+
+  if (country && capital) {
+    await addQuestion(country, capital, options);
+    quizData = await fetchQuizData(); // Refresh the quiz data
+    renderQuestionList(); // Update the question list
+    document.getElementById("add-question-form").reset(); // Clear the form
+  } else {
+    alert("Please fill in both country and capital.");
+  }
+}
+
+// Handle deleting a question
+async function handleDeleteQuestion(id) {
+  await deleteQuestion(id);
+  quizData = await fetchQuizData(); // Refresh the quiz data
+  renderQuestionList(); // Update the question list
+}
+
+// Initialize the app
 document.getElementById("start-button").addEventListener("click", async () => {
   quizData = await fetchQuizData();
   startQuiz();
 });
+
+document.getElementById("add-question-form").addEventListener("submit", handleAddQuestion);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -97,3 +182,7 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+// Initial render of the question list
+quizData = await fetchQuizData();
+renderQuestionList();

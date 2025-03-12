@@ -15,6 +15,20 @@
     <div id="options"></div>
     <button id="next-button" style="display: none;">Next Question</button>
   </div>
+
+  <!-- Add new question form -->
+  <div id="manage-questions">
+    <h2>Manage Questions</h2>
+    <form id="add-question-form">
+      <input type="text" id="country" placeholder="Country" required>
+      <input type="text" id="capital" placeholder="Capital" required>
+      <button type="submit">Add Question</button>
+    </form>
+
+    <!-- List of current questions -->
+    <div id="question-list"></div>
+  </div>
+
   <script src="/app.js"></script>
 </body>
 </html>
