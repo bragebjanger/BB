@@ -1,125 +1,74 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const pool = require('./db');
+
 const app = express();
 app.use(cors());
-const path = require("path");
+app.use(express.json());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-const quizQuestions = [
-    {
-        id: 1,
-        country: "Norway",
-        correctAnswer: "Oslo",
-        options: ["Oslo", "Stockholm", "Copenhagen", "Helsinki"]
-    },
-    {
-        id: 2,
-        country: "France",
-        correctAnswer: "Paris",
-        options: ["Paris", "Berlin", "Madrid", "Rome"]
-    },
-    {
-        id: 3,
-        country: "Japan",
-        correctAnswer: "Tokyo",
-        options: ["Seoul", "Beijing", "Bangkok", "Tokyo"]
-    },
-    {
-        id: 4,
-        country: "Sweden",
-        correctAnswer: "Stockholm",
-        options: ["Copenhagen", "Stockholm", "Helsinki", "Oslo"]
-    },
-    {
-        id: 5,
-        country: "USA",
-        correctAnswer: "Washington DC",
-        options: ["New York", "Los Angeles", "Washington DC", "Houston"]
-    },
-    {
-        id: 6,
-        country: "Brazil",
-        correctAnswer: "Brasilia",
-        options: ["Brasilia", "Rio De Janeiro", "Sao Paulo", "Salvador"]
-    },
-    {
-        id: 7,
-        country: "Australia",
-        correctAnswer: "Canberra",
-        options: ["Victoria", "Sidney", "Perth", "Canberra"]
-    },
-    {
-        id: 8,
-        country: "England",
-        correctAnswer: "London",
-        options: ["Derby", "Southampton", "London", "York"]
-    },
-    {
-        id: 9,
-        country: "Germany",
-        correctAnswer: "Berlin",
-        options: ["Berlin", "Hamburg", "Dusseldorf", "Munchen"]
-    },
-    {
-        id: 10,
-        country: "Italy",
-        correctAnswer: "Rome",
-        options: ["Venice", "Napoli", "Firenze", "Rome"]
-    }
-];
-
-app.get("/quiz", (req, res) => {
-    res.json({ status: "success", data: quizQuestions });
-});
-
-app.get("/quiz/:id", (req, res) => {
-    const { id } = req.params;
-    const question = findQuestionById(quizQuestions, id);
-    res.json({ status: "success", data: question });
-  });
-
-app.post("/quiz", (req, res) => {
-  const { question, correctAnswer, options } = req.body;
-  const newQuestion = {
-    id: quizQuestions.length + 1,
-    question,
-    correctAnswer,
-    options
-  };
-  quizQuestions.push(newQuestion);
-  res.json({ status: "success", data: newQuestion });
-});
-
-app.put("/quiz/:id", (req, res) => {
-    const { id } = req.params;
-    const { question, correctAnswer, options } = req.body;
-    const questionToUpdate = findQuestionById(quizQuestions, id);
-    if (questionToUpdate) {
-      questionToUpdate.question = question || questionToUpdate.question;
-      questionToUpdate.correctAnswer = correctAnswer || questionToUpdate.correctAnswer;
-      questionToUpdate.options = options || questionToUpdate.options;
-      res.json({ status: "success", data: questionToUpdate });
-    } else {
-      res.status(404).json({ status: "error", message: "Question not found" });
-    }
-  });
-
-app.delete("/quiz/:id", (req, res) => {
-    const { id } = req.params;
-    const questionIndex = quizQuestions.findIndex(q => q.id == id);
-    
-    if (questionIndex !== -1) {
-      quizQuestions.splice(questionIndex, 1);
-      res.json({ status: "success", message: "Question deleted" });
-    } else {
-      res.status(404).json({ status: "error", message: "Question not found" });
+app.get("/quiz", async (req, res) => {
+    try {
+        const allQuestions = await pool.query("SELECT * FROM quiz_questions");
+        res.json({ status: "success", data: allQuestions.rows });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ status: "error", message: "Server error" });
     }
 });
 
-function findQuestionById(node, id) {
-    if (!node) return null;
-    if (node.id == id) return node;
-  }
+app.get("/quiz/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const question = await pool.query("SELECT * FROM quiz_questions WHERE id = $1", [id]);
+        res.json({ status: "success", data: question.rows[0] });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ status: "error", message: "Server error" });
+    }
+});
+
+app.post("/quiz", async (req, res) => {
+    try {
+        const { country, correctAnswer, options } = req.body;
+        const newQuestion = await pool.query(
+            "INSERT INTO quiz_questions (country, correctAnswer, options) VALUES ($1, $2, $3) RETURNING *",
+            [country, correctAnswer, options]
+        );
+        res.json({ status: "success", data: newQuestion.rows[0] });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ status: "error", message: "Server error" });
+    }
+});
+
+app.put("/quiz/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { country, correctAnswer, options } = req.body;
+        const updatedQuestion = await pool.query(
+            "UPDATE quiz_questions SET country = $1, correctAnswer = $2, options = $3 WHERE id = $4 RETURNING *",
+            [country, correctAnswer, options, id]
+        );
+        res.json({ status: "success", data: updatedQuestion.rows[0] });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ status: "error", message: "Server error" });
+    }
+});
+
+app.delete("/quiz/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query("DELETE FROM quiz_questions WHERE id = $1", [id]);
+        res.json({ status: "success", message: "Question deleted" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ status: "error", message: "Server error" });
+    }
+});
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`API kjører på http://localhost:${PORT}`));
