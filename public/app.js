@@ -9,15 +9,16 @@ async function fetchQuizData() {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    return data.data;
+    return data.data; // Assuming the data is nested under 'data' key
   } catch (error) {
     console.error('Error fetching quiz data:', error);
     return [];
   }
 }
 
-async function startQuiz() {
-  quizData = await fetchQuizData();
+function startQuiz() {
+  document.getElementById("start-button").style.display = "none";
+  document.getElementById("quiz-container").style.display = "block";
   currentQuestionIndex = 0;
   score = 0;
   showQuestion();
@@ -51,7 +52,7 @@ function checkAnswer(selected, correct) {
   }
   currentQuestionIndex++;
   if (currentQuestionIndex < quizData.length) {
-    document.getElementById("next-button").style.display = "block";
+    showQuestion();
   } else {
     showResult();
   }
@@ -61,12 +62,27 @@ function showResult() {
   document.getElementById("quiz-container").innerHTML = `
     <h2>Quiz Result</h2>
     <p>You got ${score} out of ${quizData.length} correct!</p>
+    <button id="reset-button">Try Again</button>
   `;
+  document.getElementById("reset-button").addEventListener("click", resetQuiz);
 }
 
-document.getElementById("next-button").addEventListener("click", showQuestion);
+function resetQuiz() {
+  document.getElementById("start-button").style.display = "block";
+  document.getElementById("quiz-container").style.display = "none";
+  document.getElementById("quiz-container").innerHTML = `
+    <h1>Capital Quiz</h1>
+    <p id="question"></p>
+    <div id="options"></div>
+    <button id="next-button" style="display: none;">Next Question</button>
+  `;
+  startQuiz();
+}
 
-startQuiz();
+document.getElementById("start-button").addEventListener("click", async () => {
+  quizData = await fetchQuizData();
+  startQuiz();
+});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
