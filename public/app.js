@@ -164,6 +164,15 @@ async function handleDeleteQuestion(id) {
 }
 
 // Initialize the app
+async function initializeApp() {
+  quizData = await fetchQuizData();
+  renderQuestionList();
+}
+
+// Call the initializeApp function
+initializeApp();
+
+// Event listeners
 document.getElementById("start-button").addEventListener("click", async () => {
   quizData = await fetchQuizData();
   startQuiz();
@@ -182,7 +191,3 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-
-// Initial render of the question list
-quizData = await fetchQuizData();
-renderQuestionList();
