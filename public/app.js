@@ -2,6 +2,15 @@ let quizData = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
+// Helper function to shuffle an array
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // Fetch quiz data from the server
 async function fetchQuizData() {
   try {
@@ -40,7 +49,11 @@ function showQuestion() {
   const optionsContainer = document.getElementById("options");
   optionsContainer.innerHTML = "";
 
-  question.options.forEach(option => {
+  // Shuffle the options
+  const shuffledOptions = shuffleArray(question.options);
+
+  // Create buttons for the shuffled options
+  shuffledOptions.forEach(option => {
     const button = document.createElement("button");
     button.innerText = option;
     button.onclick = () => checkAnswer(option, question.correctanswer); // Use correctanswer (all lowercase)
