@@ -2,7 +2,7 @@ let quizData = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
-// Helper function to shuffle an array
+
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -11,7 +11,7 @@ function shuffleArray(array) {
   return array;
 }
 
-// Fetch quiz data from the server
+
 async function fetchQuizData() {
   try {
     const response = await fetch("/quiz");
@@ -19,7 +19,7 @@ async function fetchQuizData() {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    return data.data; // Assuming the data is nested under 'data' key
+    return data.data;
   } catch (error) {
     console.error('Error fetching quiz data:', error);
     return [];
@@ -30,7 +30,7 @@ async function fetchQuizData() {
 function startQuiz() {
   document.getElementById("start-button").style.display = "none";
   document.getElementById("quiz-container").style.display = "block";
-  document.getElementById("manage-questions").style.display = "none"; // Hide question management section
+  document.getElementById("manage-questions").style.display = "none";
   currentQuestionIndex = 0;
   score = 0;
   showQuestion();
@@ -49,21 +49,20 @@ function showQuestion() {
   const optionsContainer = document.getElementById("options");
   optionsContainer.innerHTML = "";
 
-  // Shuffle the options
   const shuffledOptions = shuffleArray(question.options);
 
-  // Create buttons for the shuffled options
+
   shuffledOptions.forEach(option => {
     const button = document.createElement("button");
     button.innerText = option;
-    button.onclick = () => checkAnswer(option, question.correctanswer); // Use correctanswer (all lowercase)
+    button.onclick = () => checkAnswer(option, question.correctanswer);
     optionsContainer.appendChild(button);
   });
 
   document.getElementById("next-button").style.display = "none";
 }
 
-// Check the user's answer
+
 function checkAnswer(selected, correct) {
   console.log("Selected:", selected);
   console.log("Correct:", correct);
@@ -78,7 +77,6 @@ function checkAnswer(selected, correct) {
   }
 }
 
-// Show the quiz result
 function showResult() {
   document.getElementById("quiz-container").innerHTML = `
     <h2>Quiz Result</h2>
@@ -88,7 +86,7 @@ function showResult() {
   document.getElementById("reset-button").addEventListener("click", resetQuiz);
 }
 
-// Reset the quiz
+
 function resetQuiz() {
   document.getElementById("start-button").style.display = "block";
   document.getElementById("quiz-container").style.display = "none";
@@ -101,7 +99,6 @@ function resetQuiz() {
   startQuiz();
 }
 
-// Add a new question to the database
 async function addQuestion(country, capital, options) {
   try {
     const response = await fetch("/quiz/add", {
@@ -121,7 +118,7 @@ async function addQuestion(country, capital, options) {
   }
 }
 
-// Delete a question from the database
+
 async function deleteQuestion(id) {
   try {
     const response = await fetch(`/quiz/delete/${id}`, {
@@ -137,7 +134,7 @@ async function deleteQuestion(id) {
   }
 }
 
-// Render the list of current questions
+
 async function renderQuestionList() {
   const questionList = document.getElementById("question-list");
   questionList.innerHTML = "";
@@ -153,7 +150,7 @@ async function renderQuestionList() {
   });
 }
 
-// Handle form submission for adding a new question
+
 async function handleAddQuestion(event) {
   event.preventDefault();
   const country = document.getElementById("country").value;
@@ -162,13 +159,13 @@ async function handleAddQuestion(event) {
   const option2 = document.getElementById("option2").value;
   const option3 = document.getElementById("option3").value;
 
-  const options = [capital, option1, option2, option3]; // Include user-provided options
+  const options = [capital, option1, option2, option3];
 
   if (country && capital && option1 && option2 && option3) {
     await addQuestion(country, capital, options);
-    quizData = await fetchQuizData(); // Refresh the quiz data
-    renderQuestionList(); // Update the question list
-    document.getElementById("add-question-form").reset(); // Clear the form
+    quizData = await fetchQuizData(); 
+    renderQuestionList(); 
+    document.getElementById("add-question-form").reset(); 
   } else {
     alert("Please fill in all fields.");
   }

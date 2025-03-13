@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { getQuestions, addQuestion, deleteQuestion } from "../Utils/dbManager.js";
-import QuizQuestion from "../Utils/quizQuestions.js"; // Ensure this file exists
+import QuizQuestion from "../Utils/quizQuestions.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rate limiting middleware
 const rateLimit = (limit, windowInMinutes) => {
   const requestCounts = new Map();
 
@@ -46,13 +45,13 @@ const rateLimit = (limit, windowInMinutes) => {
   };
 };
 
-const RATE_LIMIT = 100; // Allow 100 requests per client
-const WINDOW_IN_MINUTES = 15; // Time window in minutes
+const RATE_LIMIT = 100;
+const WINDOW_IN_MINUTES = 15;
 app.use(rateLimit(RATE_LIMIT, WINDOW_IN_MINUTES));
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Endpoint to fetch quiz questions
+
 app.get("/quiz", async (req, res) => {
   try {
     const questions = await getQuestions();
@@ -63,7 +62,7 @@ app.get("/quiz", async (req, res) => {
   }
 });
 
-// Endpoint to add a new question
+
 app.post("/quiz/add", async (req, res) => {
   const { country, correctanswer, options } = req.body;
   const question = new QuizQuestion(null, country, correctanswer, options);
@@ -81,7 +80,7 @@ app.post("/quiz/add", async (req, res) => {
   }
 });
 
-// Endpoint to delete a question
+
 app.delete("/quiz/delete/:id", async (req, res) => {
   const { id } = req.params;
   try {
