@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { getQuestions, addQuestion, deleteQuestion } from "../Utils/dbManager.js";
-import QuizQuestion from "../Utils/quizQuestion.js"; // Ensure this file exists
+import QuizQuestion from "../Utils/quizQuestions.js"; // Ensure this file exists
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
